@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TOKO KASIH IBU - Association</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+
+    <style>
+      /* (CSS sama seperti sebelumnya) */
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f8f8;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+      }
+      header {
+        width: 100%;
+        text-align: center;
+        padding: 20px 0;
+        border-bottom: 1px solid #ddd;
+        background-color: #fff;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 24px;
+        color: #333;
+      }
+      nav {
+        margin-top: 10px;
+        margin-bottom: 0;
+      }
+      nav a,
+      nav span.active {
+        text-decoration: none;
+        color: #555;
+        margin: 0 15px;
+        font-size: 16px;
+        padding-bottom: 5px;
+      }
+      nav a:hover {
+        border-bottom: 2px solid #555;
+      }
+      nav span.active {
+        border-bottom: 2px solid #555;
+        font-weight: bold;
+      }
+      .main-content {
+        width: 90%;
+        max-width: 1200px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+      .table-section {
+        flex-grow: 1;
+        min-width: 600px;
+        max-width: calc(100% - 320px);
+        display: flex;
+        flex-direction: column;
+      }
+      .filters-section {
+        width: 280px;
+        flex-shrink: 0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        background-color: #f9f9f9;
+      }
+      .filter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-weight: bold;
+        color: #333;
+        cursor: pointer;
+        user-select: none;
+      }
+      .filter-header span {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .filter-group {
+        margin-bottom: 15px;
+      }
+      .filter-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+        color: #555;
+      }
+      .filter-group input[type="date"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      .radio-filter {
+        margin-bottom: 10px;
+      }
+      .radio-filter label {
+        font-size: 14px;
+        color: #555;
+        margin-left: 5px;
+        user-select: none;
+      }
+      .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        flex-grow: 1;
+        padding: 10px;
+      }
+      .dataTables_wrapper .dataTables_length,
+      .dataTables_wrapper .dataTables_filter,
+      .dataTables_wrapper .dataTables_info,
+      .dataTables_wrapper .dataTables_paginate {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      .data-table {
+        width: 100% !important;
+        border-collapse: collapse;
+        margin-top: 0;
+      }
+      .data-table th,
+      .data-table td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+        vertical-align: middle;
+        white-space: nowrap;
+      }
+      .data-table th {
+        background-color: #f0f0f0;
+      }
+      .view-data-accordion-header {
+        background-color: #e9ecef;
+        padding: 10px 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+        color: #333;
+        user-select: none;
+      }
+      .run-model-button {
+        margin-top: auto;
+        align-self: flex-start;
+        padding: 10px 25px;
+        font-size: 16px;
+      }
+      .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+      }
+      .accordion-content.show {
+        max-height: 900px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>TOKO KASIH IBU</h1>
+      <nav>
+        <a href="/">Home</a>
+        <span class="active">Association</span>
+        <a href="/output">Output</a>
+        <a href="/recommendation">Recommendation</a>
+      </nav>
+    </header>
+
+    <div class="main-content">
+      <div class="table-section">
+        <div
+          class="view-data-accordion-header"
+          id="viewDataAccordionHeader"
+          aria-expanded="true"
+          tabindex="0"
+          role="button"
+        >
+          <span>View Data</span>
+          <i class="fas fa-chevron-up accordion-icon"></i>
+        </div>
+        <div class="accordion-content show" id="dataGridContainer">
+          <div class="table-responsive">
+            <table class="data-table display" id="dataTable">
+              <thead>
+                <tr>
+                  {% for header in headers %}
+                  <th>{{ header }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in rows %}
+                <tr>
+                  {% for cell in row %}
+                  <td>{{ cell }}</td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <form method="POST">
+            <button type="submit" name="action" value="run_model" class="run-model-button">Run Model</button>
+        </form>
+      </div>
+
+      <div class="filters-section">
+        <div
+          class="filter-header"
+          id="filterHeader"
+          tabindex="0"
+          role="button"
+          aria-expanded="true"
+        >
+          <span><i class="fas fa-filter"></i> Filters</span>
+          <i class="fas fa-chevron-down accordion-icon"></i>
+        </div>
+        <div class="filter-content show">
+          <!-- Filter 1 -->
+          <div class="radio-filter">
+            <input
+              type="checkbox"
+              id="filter1"
+              name="filterOption"
+              value="filter1"
+            />
+            <label for="filter1">Filter 1</label>
+          </div>
+          <div class="filter-group">
+            <label for="startDate1">Start Date 1</label>
+            <input type="date" id="startDate1" name="startDate1" />
+          </div>
+          <div class="filter-group">
+            <label for="dueDate1">Due Date 1</label>
+            <input type="date" id="dueDate1" name="dueDate1" />
+          </div>
+
+          <hr />
+          <!-- Filter 2 -->
+          <div class="radio-filter">
+            <input
+              type="checkbox"
+              id="filter2"
+              name="filterOption"
+              value="filter2"
+            />
+            <label for="filter2">Filter 2</label>
+          </div>
+          <div class="filter-group">
+            <label for="startDate2">Start Date 2</label>
+            <input type="date" id="startDate2" name="startDate2" />
+          </div>
+          <div class="filter-group">
+            <label for="dueDate2">Due Date 2</label>
+            <input type="date" id="dueDate2" name="dueDate2" />
+          </div>
+
+          <hr />
+          <!-- Filter 3 -->
+          <div class="radio-filter">
+            <input
+              type="checkbox"
+              id="filter3"
+              name="filterOption"
+              value="filter3"
+            />
+            <label for="filter3">Filter 3</label>
+          </div>
+          <div class="filter-group">
+            <label for="startDate3">Start Date 3</label>
+            <input type="date" id="startDate3" name="startDate3" />
+          </div>
+          <div class="filter-group">
+            <label for="dueDate3">Due Date 3</label>
+            <input type="date" id="dueDate3" name="dueDate3" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Inisialisasi DataTables
+        const table = $("#dataTable").DataTable({
+          paging: true,
+          searching: true,
+          ordering: true,
+          lengthChange: true,
+          pageLength: 10,
+          language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json",
+          },
+        });
+
+        // Fungsi custom filtering DataTables
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+          function parseDate(str) {
+            if (!str) return null;
+            const d = new Date(str);
+            return isNaN(d) ? null : d;
+          }
+
+          // Ambil checkbox dan tanggal dari masing-masing filter
+          const filter1Checked = $("#filter1").is(":checked");
+          const filter2Checked = $("#filter2").is(":checked");
+          const filter3Checked = $("#filter3").is(":checked");
+
+          const f1Start = filter1Checked
+            ? parseDate($("#startDate1").val())
+            : null;
+          const f1Due = filter1Checked ? parseDate($("#dueDate1").val()) : null;
+
+          const f2Start = filter2Checked
+            ? parseDate($("#startDate2").val())
+            : null;
+          const f2Due = filter2Checked ? parseDate($("#dueDate2").val()) : null;
+
+          const f3Start = filter3Checked
+            ? parseDate($("#startDate3").val())
+            : null;
+          const f3Due = filter3Checked ? parseDate($("#dueDate3").val()) : null;
+
+          const rowDate = parseDate(data[1]); // sesuaikan kolom tanggalnya
+          if (!rowDate) return false;
+
+          function inRange(date, start, due) {
+            if (start && date < start) return false;
+            if (due && date > due) return false;
+            return true;
+          }
+
+          // Jika tidak ada filter yang dicentang / aktif, tampilkan semua data
+          if (!filter1Checked && !filter2Checked && !filter3Checked) {
+            return true;
+          }
+
+          // Cek apakah rowDate masuk dalam salah satu rentang filter yang aktif
+          const matchFilter1 =
+            filter1Checked && (f1Start || f1Due)
+              ? inRange(rowDate, f1Start, f1Due)
+              : false;
+          const matchFilter2 =
+            filter2Checked && (f2Start || f2Due)
+              ? inRange(rowDate, f2Start, f2Due)
+              : false;
+          const matchFilter3 =
+            filter3Checked && (f3Start || f3Due)
+              ? inRange(rowDate, f3Start, f3Due)
+              : false;
+
+          // Return true jika cocok di salah satu filter yang aktif (OR)
+          return matchFilter1 || matchFilter2 || matchFilter3;
+        });
+
+        // Event listener input dan checkbox filter
+        $(
+          "#startDate1, #dueDate1, #startDate2, #dueDate2, #startDate3, #dueDate3"
+        ).on("change", function () {
+          table.draw();
+        });
+        $("#filter1, #filter2, #filter3").on("change", function () {
+          table.draw();
+        });
+
+        // Accordion filter show/hide
+        $("#filterHeader").on("click keypress", function (e) {
+          if (e.type === "click" || e.key === "Enter" || e.key === " ") {
+            const content = $(".filter-content");
+            content.toggleClass("show");
+            const icon = $(this).find(".accordion-icon");
+            icon.toggleClass("fa-chevron-down fa-chevron-up");
+            e.preventDefault();
+          }
+        });
+
+        // Accordion view data show/hide
+        $("#viewDataAccordionHeader").on("click keypress", function (e) {
+          if (e.type === "click" || e.key === "Enter" || e.key === " ") {
+            const content = $("#dataGridContainer");
+            content.toggleClass("show");
+            const icon = $(this).find(".accordion-icon");
+            icon.toggleClass("fa-chevron-down fa-chevron-up");
+            e.preventDefault();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
