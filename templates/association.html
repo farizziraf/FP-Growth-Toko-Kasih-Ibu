@@ -190,6 +190,28 @@
       .accordion-content.show {
         max-height: 900px;
       }
+      .run-model-button {
+        border: none;
+        background: #e9ecef;
+        color: #333;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 10px 25px;
+        margin-top: 20px;
+        border-radius: 5px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        transition: background-color 0.3s ease;
+        font-size: 16px;
+      }
+
+      .run-model-button:hover,
+      .run-model-button:focus {
+        background-color: #d6d8db;
+        outline: none;
+      }
     </style>
   </head>
   <body>
@@ -198,8 +220,8 @@
       <nav>
         <a href="/">Home</a>
         <span class="active">Association</span>
-        <a href="/output">Output</a>
-        <a href="/recommendation">Recommendation</a>
+        <a href="">Output</a>
+        <a href="">Recommendation</a>
       </nav>
     </header>
 
@@ -239,7 +261,14 @@
         </div>
 
         <form method="POST">
-            <button type="submit" name="action" value="run_model" class="run-model-button">Run Model</button>
+          <button
+            type="submit"
+            name="action"
+            value="run_model"
+            class="view-data-accordion-header run-model-button"
+          >
+            Run Model
+          </button>
         </form>
       </div>
 

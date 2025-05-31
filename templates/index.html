@@ -21,6 +21,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        min-height: 100vh; /* Ensure body takes full viewport height */
       }
       header {
         width: 100%;
@@ -38,7 +39,8 @@
         margin-top: 10px;
         margin-bottom: 0px;
       }
-      nav a {
+      nav a,
+      nav span.active {
         text-decoration: none;
         color: #555;
         margin: 0 15px;
@@ -48,6 +50,10 @@
       nav a:hover {
         border-bottom: 2px solid #555;
       }
+      nav span.active {
+        border-bottom: 2px solid #555;
+        font-weight: bold;
+      }
       .container {
         width: 80%;
         max-width: 700px;
@@ -56,6 +62,8 @@
         border-radius: 8px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         text-align: center;
+        margin-top: 20px; /* Added margin-top to position below header */
+        flex-grow: 1; /* Allow container to grow and push footer down if any */
       }
       .container h2 {
         margin-top: 0;
@@ -116,6 +124,30 @@
       .clear-file-button:hover {
         color: #c82333;
       }
+
+      /* New style for the custom button, matching results-button */
+      .custom-button {
+        border: none;
+        background: #e9ecef;
+        color: #333;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 10px 25px;
+        margin-top: 20px; /* Adjust margin as needed */
+        border-radius: 5px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        transition: background-color 0.3s ease;
+        font-size: 16px;
+      }
+
+      .custom-button:hover,
+      .custom-button:focus {
+        background-color: #d6d8db;
+        outline: none;
+      }
     </style>
   </head>
   <body>
@@ -123,9 +155,9 @@
       <h1>TOKO KASIH IBU</h1>
       <nav>
         <span class="active">Home</span>
-        <a href="">Association</a>
-        <a href="">Output</a>
-        <a href="">Recommendation</a>
+        <a href="/association">Association</a>
+        <a href="/output">Output</a>
+        <a href="/recommendation">Recommendation</a>
       </nav>
     </header>
 
@@ -133,7 +165,6 @@
       <h2>Data Transaksi</h2>
       <p>Format File (.xlsx / .csv)</p>
 
-      <!-- FORM UPLOAD -->
       <form
         id="uploadForm"
         method="POST"
@@ -167,8 +198,7 @@
         </div>
       </form>
 
-      <!-- TOMBOL VIEW DATA -->
-      <button id="viewDataBtn" class="btn btn-primary mt-3" disabled>
+      <button id="viewDataBtn" class="custom-button mt-3" disabled>
         View Data
       </button>
     </div>
@@ -206,7 +236,8 @@
         newFileInput.type = "file";
         newFileInput.id = "fileInput";
         newFileInput.name = "file_upload";
-        newFileInput.accept = ".xlsx";
+        // Ensure accept attribute is set to .xlsx, .csv
+        newFileInput.accept = ".xlsx,.csv";
         newFileInput.style.display = "none";
 
         fileInput.parentNode.replaceChild(newFileInput, fileInput);
@@ -226,6 +257,7 @@
 
       browseButton.addEventListener("click", () => fileInput.click());
       uploadArea.addEventListener("click", (e) => {
+        // Only trigger file input if the click wasn't directly on the browse button
         if (e.target !== browseButton) fileInput.click();
       });
 

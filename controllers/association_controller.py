@@ -1,15 +1,9 @@
 import os
 import datetime
 import pandas as pd
-from flask import render_template, session, abort, request, flash, redirect
+from flask import render_template, session, abort, request, flash, redirect, url_for
 from mlxtend.frequent_patterns import fpgrowth, association_rules
-
-# Variabel global untuk menyimpan hasil
-df_all_frequent_itemsets_produk = None
-df_all_frequent_itemsets_kategori = None
-rules_produk = None
-rules_kategori = None
-df_filtered = None  # ditambahkan agar global
+import global_var  # import modul global_var
 
 # Fungsi bantu parsing tanggal
 def parse_date_ddmmyyyy(date_str):
@@ -22,8 +16,6 @@ def parse_date_ddmmyyyy(date_str):
 
 # Fungsi utama untuk load dan filter data
 def association():
-    global df_filtered
-
     file_path = session.get('uploaded_file', None)
 
     if not file_path or not os.path.exists(file_path):
@@ -43,7 +35,7 @@ def association():
     date_col = 'TG_JUAL'
     df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
 
-    # Ambil filter tanggal
+    # Ambil filter tanggal dari parameter request
     f1_start = parse_date_ddmmyyyy(request.args.get('f1_start'))
     f1_due = parse_date_ddmmyyyy(request.args.get('f1_due'))
     f2_start = parse_date_ddmmyyyy(request.args.get('f2_start'))
@@ -51,7 +43,6 @@ def association():
     f3_start = parse_date_ddmmyyyy(request.args.get('f3_start'))
     f3_due = parse_date_ddmmyyyy(request.args.get('f3_due'))
 
-    # Fungsi bantu filter tanggal
     def filter_date_range(df, col, start, due):
         if start:
             df = df[df[col] >= start]
@@ -59,7 +50,7 @@ def association():
             df = df[df[col] <= due]
         return df
 
-    # Filter jika ada tanggal
+    # Filter data berdasarkan tanggal jika ada
     if any([f1_start, f1_due, f2_start, f2_due, f3_start, f3_due]):
         filtered_dfs = []
         if f1_start or f1_due:
@@ -75,6 +66,8 @@ def association():
         df_filtered = df
         df_display = df.head(1000)
 
+    global_var.df_filtered = df_filtered  # simpan ke global_var agar bisa dipakai di fungsi lain
+
     headers = df_display.columns.tolist()
     rows = df_display.values.tolist()
 
@@ -82,8 +75,6 @@ def association():
 
 # Fungsi utama untuk menangani model asosiasi
 def handle_association(request):
-    global df_filtered, df_all_frequent_itemsets_produk, df_all_frequent_itemsets_kategori, rules_produk, rules_kategori
-
     try:
         df, df_filtered, headers, rows = association()  # Ambil data dari fungsi association
     except Exception as e:
@@ -97,6 +88,7 @@ def handle_association(request):
         cols_produk = data_encodedproduk.columns.difference(['NO_FAKTUR'])
         data_encodedproduk[cols_produk] = data_encodedproduk[cols_produk].astype('uint8')
         df_transaksi = data_encodedproduk.groupby('NO_FAKTUR').max()
+        total_transaksi = df_filtered['NO_FAKTUR'].nunique()
 
         all_results = []
         for i in range(0, len(df_transaksi), 10000):
@@ -127,7 +119,12 @@ def handle_association(request):
         rules_kategori = association_rules(df_all_frequent_itemsets_kategori, metric="confidence", min_threshold=0.5)
         rules_kategori = rules_kategori[(rules_kategori['confidence'] <= 1) & (rules_kategori['lift'] >= 1)].sort_values(by='lift', ascending=False)
 
+        # Simpan hasil rules ke global_var agar bisa dipakai di controller lain
+        global_var.rules_produk = rules_produk
+        global_var.rules_kategori = rules_kategori
+        global_var.total_transaksi = total_transaksi
+
         flash("Model berhasil dijalankan!", "success")
-        return redirect('/output')
+        return redirect(url_for('route_output'))
 
     return render_template("association.html", headers=headers, rows=rows)
