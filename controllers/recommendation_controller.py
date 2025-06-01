@@ -1,5 +1,4 @@
 from flask import render_template
-from markupsafe import Markup
 import global_var
 
 def recommendation():
@@ -16,9 +15,6 @@ def recommendation():
     def frozenset_to_string(fs):
         return ', '.join([clean_item(i) for i in fs])
 
-    def highlight(text):
-        return Markup(f"<strong>{text}</strong>")
-
     produk_narasi = []
     for _, row in rules_produk.iterrows():
         x = frozenset_to_string(row['antecedents'])
@@ -26,16 +22,11 @@ def recommendation():
         confidence_percent = f"{row['confidence']*100:.2f}%"
         support_percent = f"{row['support']*100:.2f}%"
 
-        x_highlight = highlight(f'"{x}"')
-        y_highlight = highlight(f'"{y}"')
-        confidence_highlight = highlight(confidence_percent)
-        support_highlight = highlight(support_percent)
-
         narasi = (
-            f"Jika Produk {x_highlight} terbeli, maka terdapat kemungkinan sekitar {confidence_highlight} "
-            f"bahwa Produk {y_highlight} juga akan terbeli. Produk ini dibeli bersama dalam sekitar {support_highlight} "
-            f"dari total transaksi. Oleh karena itu, Toko Kasih Ibu disarankan untuk menawarkan promo bundling untuk Produk "
-            f"{x_highlight} bersama Produk {y_highlight} dan menempatkannya pada rak khusus promo."
+            f'Jika Produk "{x}" terbeli, maka terdapat kemungkinan sekitar {confidence_percent} '
+            f'bahwa Produk "{y}" juga akan terbeli. Produk ini dibeli bersama dalam sekitar {support_percent} '
+            f'dari total transaksi. Oleh karena itu, Toko Kasih Ibu disarankan untuk menawarkan promo bundling untuk Produk '
+            f'"{x}" bersama Produk "{y}" dan menempatkannya pada rak khusus promo.'
         )
         produk_narasi.append(narasi)
 
@@ -46,16 +37,11 @@ def recommendation():
         confidence_percent = f"{row['confidence']*100:.2f}%"
         support_percent = f"{row['support']*100:.2f}%"
 
-        x_highlight = highlight(f'"{x}"')
-        y_highlight = highlight(f'"{y}"')
-        confidence_highlight = highlight(confidence_percent)
-        support_highlight = highlight(support_percent)
-
         narasi = (
-            f"Jika Produk pada Kategori Produk {x_highlight} terbeli, maka terdapat kemungkinan {confidence_highlight} "
-            f"Produk pada Kategori Produk {y_highlight} akan terbeli. Produk pada Kategori Produk ini dibeli bersama dalam sekitar "
-            f"{support_highlight} dari total transaksi. Oleh karena itu, Toko Kasih Ibu disarankan untuk menempatkan rak Kategori Produk "
-            f"{y_highlight} di dekat rak Kategori Produk {x_highlight}."
+            f'Jika Produk pada Kategori Produk "{x}" terbeli, maka terdapat kemungkinan {confidence_percent} '
+            f'Produk pada Kategori Produk "{y}" akan terbeli. Produk pada Kategori Produk ini dibeli bersama dalam sekitar '
+            f'{support_percent} dari total transaksi. Oleh karena itu, Toko Kasih Ibu disarankan untuk menempatkan rak Kategori Produk '
+            f'"{y}" di dekat rak Kategori Produk "{x}".'
         )
         kategori_narasi.append(narasi)
 

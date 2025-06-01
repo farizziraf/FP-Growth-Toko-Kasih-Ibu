@@ -1,5 +1,5 @@
 from flask import render_template, flash, redirect, url_for
-import global_var  # import global var agar bisa akses rules_produk dan rules_kategori
+import global_var
 
 def clean_item(item):
     return item.replace('PRODUK_', '').replace('KATEGORI_', '')

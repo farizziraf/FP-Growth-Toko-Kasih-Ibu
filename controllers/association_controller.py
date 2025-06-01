@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 from flask import render_template, session, abort, request, flash, redirect, url_for
 from mlxtend.frequent_patterns import fpgrowth, association_rules
-import global_var  # import modul global_var
+import global_var
 
 # Fungsi bantu parsing tanggal
 def parse_date_ddmmyyyy(date_str):
@@ -99,7 +99,7 @@ def handle_association(request):
 
         df_all_frequent_itemsets_produk = pd.concat(all_results).drop_duplicates(subset='itemsets').reset_index(drop=True)
         rules_produk = association_rules(df_all_frequent_itemsets_produk, metric="confidence", min_threshold=0.5)
-        rules_produk = rules_produk[(rules_produk['confidence'] <= 1) & (rules_produk['lift'] >= 1)].sort_values(by='lift', ascending=False)
+        rules_produk = rules_produk[(rules_produk['support'] >= 0.02) & (rules_produk['confidence'] <= 1) & (rules_produk['lift'] >= 1)].sort_values(by='lift', ascending=False)
 
         # === FREQUENT ITEMSETS KATEGORI PRODUK ===
         data_encodedkategori = pd.get_dummies(df_filtered['KATEGORI_PRODUK'], prefix='KATEGORI')
@@ -117,7 +117,7 @@ def handle_association(request):
 
         df_all_frequent_itemsets_kategori = pd.concat(all_results).drop_duplicates(subset='itemsets').reset_index(drop=True)
         rules_kategori = association_rules(df_all_frequent_itemsets_kategori, metric="confidence", min_threshold=0.5)
-        rules_kategori = rules_kategori[(rules_kategori['confidence'] <= 1) & (rules_kategori['lift'] >= 1)].sort_values(by='lift', ascending=False)
+        rules_kategori = rules_kategori[(rules_kategori['support'] >= 0.02) & (rules_kategori['confidence'] <= 1) & (rules_kategori['lift'] >= 1)].sort_values(by='lift', ascending=False)
 
         # Simpan hasil rules ke global_var agar bisa dipakai di controller lain
         global_var.rules_produk = rules_produk
