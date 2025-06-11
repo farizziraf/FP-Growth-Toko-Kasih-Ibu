@@ -188,7 +188,7 @@
         transition: max-height 0.3s ease-out;
       }
       .accordion-content.show {
-        max-height: 900px;
+        max-height: 900px; /* Adjust as needed for content */
       }
       .run-model-button {
         border: none;
@@ -226,41 +226,41 @@
     </header>
 
     <div class="main-content">
-      <div class="table-section">
-        <div
-          class="view-data-accordion-header"
-          id="viewDataAccordionHeader"
-          aria-expanded="true"
-          tabindex="0"
-          role="button"
-        >
-          <span>View Data</span>
-          <i class="fas fa-chevron-up accordion-icon"></i>
-        </div>
-        <div class="accordion-content show" id="dataGridContainer">
-          <div class="table-responsive">
-            <table class="data-table display" id="dataTable">
-              <thead>
-                <tr>
-                  {% for header in headers %}
-                  <th>{{ header }}</th>
-                  {% endfor %}
-                </tr>
-              </thead>
-              <tbody>
-                {% for row in rows %}
-                <tr>
-                  {% for cell in row %}
-                  <td>{{ cell }}</td>
-                  {% endfor %}
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+      <form action="{{ url_for('route_association') }}" method="POST" class="d-flex w-100 flex-wrap gap-3 justify-content-between">
+        <div class="table-section">
+          <div
+            class="view-data-accordion-header"
+            id="viewDataAccordionHeader"
+            aria-expanded="true"
+            tabindex="0"
+            role="button"
+          >
+            <span>View Data</span>
+            <i class="fas fa-chevron-up accordion-icon"></i>
           </div>
-        </div>
+          <div class="accordion-content show" id="dataGridContainer">
+            <div class="table-responsive">
+              <table class="data-table display" id="dataTable">
+                <thead>
+                  <tr>
+                    {% for header in headers %}
+                    <th>{{ header }}</th>
+                    {% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for row in rows %}
+                  <tr>
+                    {% for cell in row %}
+                    <td>{{ cell }}</td>
+                    {% endfor %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-        <form method="POST">
           <button
             type="submit"
             name="action"
@@ -269,81 +269,78 @@
           >
             Run Model
           </button>
-        </form>
-      </div>
-
-      <div class="filters-section">
-        <div
-          class="filter-header"
-          id="filterHeader"
-          tabindex="0"
-          role="button"
-          aria-expanded="true"
-        >
-          <span><i class="fas fa-filter"></i> Filters</span>
-          <i class="fas fa-chevron-down accordion-icon"></i>
         </div>
-        <div class="filter-content show">
-          <!-- Filter 1 -->
-          <div class="radio-filter">
-            <input
-              type="checkbox"
-              id="filter1"
-              name="filterOption"
-              value="filter1"
-            />
-            <label for="filter1">Filter 1</label>
-          </div>
-          <div class="filter-group">
-            <label for="startDate1">Start Date 1</label>
-            <input type="date" id="startDate1" name="startDate1" />
-          </div>
-          <div class="filter-group">
-            <label for="dueDate1">Due Date 1</label>
-            <input type="date" id="dueDate1" name="dueDate1" />
-          </div>
 
-          <hr />
-          <!-- Filter 2 -->
-          <div class="radio-filter">
-            <input
-              type="checkbox"
-              id="filter2"
-              name="filterOption"
-              value="filter2"
-            />
-            <label for="filter2">Filter 2</label>
+        <div class="filters-section">
+          <div
+            class="filter-header"
+            id="filterHeader"
+            tabindex="0"
+            role="button"
+            aria-expanded="true"
+          >
+            <span><i class="fas fa-filter"></i> Filters</span>
+            <i class="fas fa-chevron-down accordion-icon"></i>
           </div>
-          <div class="filter-group">
-            <label for="startDate2">Start Date 2</label>
-            <input type="date" id="startDate2" name="startDate2" />
-          </div>
-          <div class="filter-group">
-            <label for="dueDate2">Due Date 2</label>
-            <input type="date" id="dueDate2" name="dueDate2" />
-          </div>
+          <div class="filter-content show">
+            <div class="radio-filter">
+              <input
+                type="checkbox"
+                id="filter1"
+                name="filterOption1" {# Changed name for distinct filters #}
+                value="filter1"
+              />
+              <label for="filter1">Filter 1</label>
+            </div>
+            <div class="filter-group">
+              <label for="f1_start">Start Date 1</label> {# Changed name to match Flask #}
+              <input type="date" id="f1_start" name="f1_start" value="{{ filter_dates.f1_start | default('') }}" />
+            </div>
+            <div class="filter-group">
+              <label for="f1_due">Due Date 1</label> {# Changed name to match Flask #}
+              <input type="date" id="f1_due" name="f1_due" value="{{ filter_dates.f1_due | default('') }}" />
+            </div>
 
-          <hr />
-          <!-- Filter 3 -->
-          <div class="radio-filter">
-            <input
-              type="checkbox"
-              id="filter3"
-              name="filterOption"
-              value="filter3"
-            />
-            <label for="filter3">Filter 3</label>
-          </div>
-          <div class="filter-group">
-            <label for="startDate3">Start Date 3</label>
-            <input type="date" id="startDate3" name="startDate3" />
-          </div>
-          <div class="filter-group">
-            <label for="dueDate3">Due Date 3</label>
-            <input type="date" id="dueDate3" name="dueDate3" />
+            <hr />
+            <div class="radio-filter">
+              <input
+                type="checkbox"
+                id="filter2"
+                name="filterOption2" {# Changed name #}
+                value="filter2"
+              />
+              <label for="filter2">Filter 2</label>
+            </div>
+            <div class="filter-group">
+              <label for="f2_start">Start Date 2</label> {# Changed name to match Flask #}
+              <input type="date" id="f2_start" name="f2_start" value="{{ filter_dates.f2_start | default('') }}" />
+            </div>
+            <div class="filter-group">
+              <label for="f2_due">Due Date 2</label> {# Changed name to match Flask #}
+              <input type="date" id="f2_due" name="f2_due" value="{{ filter_dates.f2_due | default('') }}" />
+            </div>
+
+            <hr />
+            <div class="radio-filter">
+              <input
+                type="checkbox"
+                id="filter3"
+                name="filterOption3" {# Changed name #}
+                value="filter3"
+              />
+              <label for="filter3">Filter 3</label>
+            </div>
+            <div class="filter-group">
+              <label for="f3_start">Start Date 3</label> {# Changed name to match Flask #}
+              <input type="date" id="f3_start" name="f3_start" value="{{ filter_dates.f3_start | default('') }}" />
+            </div>
+            <div class="filter-group">
+              <label for="f3_due">Due Date 3</label> {# Changed name to match Flask #}
+              <input type="date" id="f3_due" name="f3_due" value="{{ filter_dates.f3_due | default('') }}" />
+            </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -363,35 +360,44 @@
           },
         });
 
-        // Fungsi custom filtering DataTables
+        // The DataTable client-side filtering below is separate from the server-side filtering
+        // which will be applied when you click "Run Model".
+        // This client-side filter is just for the displayed 1000 rows.
+
         $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
           function parseDate(str) {
             if (!str) return null;
+            // Assuming the date column in your DataTable is in 'YYYY-MM-DD' format if it comes from type="date" input
+            // If it's DDMMPYYY, adjust this parsing.
             const d = new Date(str);
-            return isNaN(d) ? null : d;
+            return isNaN(d.getTime()) ? null : d; // Use getTime() to check for valid date
           }
 
           // Ambil checkbox dan tanggal dari masing-masing filter
+          // Use jQuery selectors for current input values
           const filter1Checked = $("#filter1").is(":checked");
           const filter2Checked = $("#filter2").is(":checked");
           const filter3Checked = $("#filter3").is(":checked");
 
           const f1Start = filter1Checked
-            ? parseDate($("#startDate1").val())
+            ? parseDate($("#f1_start").val()) // Corrected ID
             : null;
-          const f1Due = filter1Checked ? parseDate($("#dueDate1").val()) : null;
+          const f1Due = filter1Checked ? parseDate($("#f1_due").val()) : null; // Corrected ID
 
           const f2Start = filter2Checked
-            ? parseDate($("#startDate2").val())
+            ? parseDate($("#f2_start").val()) // Corrected ID
             : null;
-          const f2Due = filter2Checked ? parseDate($("#dueDate2").val()) : null;
+          const f2Due = filter2Checked ? parseDate($("#f2_due").val()) : null; // Corrected ID
 
           const f3Start = filter3Checked
-            ? parseDate($("#startDate3").val())
+            ? parseDate($("#f3_start").val()) // Corrected ID
             : null;
-          const f3Due = filter3Checked ? parseDate($("#dueDate3").val()) : null;
+          const f3Due = filter3Checked ? parseDate($("#f3_due").val()) : null; // Corrected ID
 
-          const rowDate = parseDate(data[1]); // sesuaikan kolom tanggalnya
+          // Assuming 'TG_JUAL' is at index 1 in your `rows` array (0-indexed)
+          // If 'TG_JUAL' is not always at index 1, you might need to adjust this
+          // or pass the column index from Flask.
+          const rowDate = parseDate(data[1]);
           if (!rowDate) return false;
 
           function inRange(date, start, due) {
@@ -425,7 +431,7 @@
 
         // Event listener input dan checkbox filter
         $(
-          "#startDate1, #dueDate1, #startDate2, #dueDate2, #startDate3, #dueDate3"
+          "#f1_start, #f1_due, #f2_start, #f2_due, #f3_start, #f3_due" // Corrected IDs
         ).on("change", function () {
           table.draw();
         });
